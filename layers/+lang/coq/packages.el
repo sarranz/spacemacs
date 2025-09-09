@@ -114,6 +114,53 @@
       "it" 'coq-insert-tactic
       "iT" 'coq-insert-tactical
       ;; Options
+      "Te" 'proof-electric-terminator-toggle))
+  (use-package proof-site
+    :mode ("\\.ec\\'" . easycrypt-mode)
+    :defer t
+    :init
+    (setq easycrypt/proof-general-load-path
+          (concat (configuration-layer/get-elpa-package-install-directory
+                   'proof-general) "generic")
+          proof-three-window-mode-policy 'hybrid
+          proof-script-fly-past-comments t
+          proof-splash-seen t)
+    (add-to-list 'load-path easycrypt/proof-general-load-path)
+    :config
+    (spacemacs|hide-lighter holes-mode)
+    (spacemacs|hide-lighter proof-active-buffer-fake-minor-mode)
+    ;; key bindings
+    (dolist (prefix '(("ml" . "pg/layout")
+                      ("mp" . "pg/prover")
+                      ("ma" . "pg/ask-prover")
+                      ("mai" . "show-implicits")
+                      ("mg" . "pg/goto")))
+      (spacemacs/declare-prefix-for-mode
+        'easycrypt-mode
+        (car prefix) (cdr prefix)))
+    (spacemacs/set-leader-keys-for-major-mode 'easycrypt-mode
+      ;; Basic proof management
+      "]" 'proof-assert-next-command-interactive
+      "[" 'proof-undo-last-successful-command
+      "." 'proof-goto-point
+      ;; Layout
+      "lc" 'pg-response-clear-displays
+      "ll" 'proof-layout-windows
+      "lp" 'proof-prf
+      ;; Prover Interaction
+      "pi" 'proof-interrupt-process
+      "pp" 'proof-process-buffer
+      "pq" 'proof-shell-exit
+      "pr" 'proof-retract-buffer
+      ;; Prover queries ('ask prover')
+      "aa" 'easycrypt-Print
+      "ab" 'easycrypt-Print
+      "ac" 'easycrypt-Print
+      ;; Moving the point (goto)
+      "ge" 'proof-goto-command-end
+      "gl" 'proof-goto-end-of-locked
+      "gs" 'proof-goto-command-start
+      ;; Options
       "Te" 'proof-electric-terminator-toggle)))
 
 (defun coq/post-init-smartparens ()
